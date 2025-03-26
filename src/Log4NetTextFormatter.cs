@@ -381,8 +381,10 @@ public class Log4NetTextFormatter : ITextFormatter
     /// <remarks>https://github.com/apache/logging-log4net/blob/rel/2.0.8/src/Layout/XmlLayout.cs#L245-L257</remarks>
     private void WriteMessage(LogEvent logEvent, XmlWriter writer)
     {
-        var message = logEvent.RenderMessage(_options.FormatProvider);
-        WriteContent(writer, "message", message);
+        var formatter = new MessageTemplateTextFormatter(_options.MessageTemplate, _options.FormatProvider);
+        using var textWriter = new StringWriter(_options.FormatProvider);
+        formatter.Format(logEvent, textWriter);
+        WriteContent(writer, "message", textWriter.ToString());
     }
 
     /// <summary>

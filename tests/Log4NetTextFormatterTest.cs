@@ -4,9 +4,11 @@ using System.Globalization;
 using System.IO;
 using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
+using System.Xml;
 using FluentAssertions;
 using Serilog.Core;
 using Serilog.Events;
+using Serilog.Formatting.Display;
 using Serilog.Parsing;
 using VerifyTests;
 using VerifyXunit;
@@ -705,6 +707,24 @@ public sealed class Log4NetTextFormatterTest : IDisposable
         return Verify(output);
     }
 
+    [Fact]
+    public void StringPropertiesRenderWithoutQuotesInMessage()
+    {
+        // Arrange
+        using var output = new StringWriter();
+        var logEvent = CreateLogEvent(messageTemplate: "Prop = {Prop}", properties: new LogEventProperty("Prop", new ScalarValue("PropValue")));
+        var formatter = new Log4NetTextFormatter(options => options.UseMessageTemplate("{Message:l}"));
+
+        // Act
+        formatter.Format(logEvent, output);
+        var xmlDoc = new XmlDocument();
+        xmlDoc.LoadXml(output.ToString());
+        var log4NetEvent = xmlDoc.GetElementsByTagName("log4net:event")[0];
+        
+        // Assert
+        Assert.Equal("Prop = PropValue", log4NetEvent!.InnerText);
+    }
+    
     private static SettingsTask Verify(StringWriter output)
     {
         var xml = output.ToString();

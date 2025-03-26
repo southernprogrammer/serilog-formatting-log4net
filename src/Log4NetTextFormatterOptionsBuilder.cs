@@ -49,6 +49,9 @@ public class Log4NetTextFormatterOptionsBuilder
     /// <summary>See <see cref="UseExceptionFormatter"/></summary>
     private ExceptionFormatter _formatException = exception => exception.ToString();
 
+    /// <summary>See <see cref="UseMessageTemplate"/></summary>
+    private string _messageTemplate = "{Message}";
+    
     /// <summary>
     /// Sets the <see cref="IFormatProvider"/> used when formatting message and properties of log4net events.
     /// <para/>
@@ -176,8 +179,19 @@ public class Log4NetTextFormatterOptionsBuilder
         _cDataMode = CDataMode.Always;
     }
 
+    /// Template for how the value in the message tag is rendered
+    /// The default is simply {Message}
+    /// the l flag will turn off quotation marks around property values
+    /// the j flag is utilized for a json output
+    /// Examples: {Message:lj}, {Message:l}, {Message:j}
+    /// <param name="messageTemplate">The Message Template</param>
+    public void UseMessageTemplate(string messageTemplate)
+    {
+        _messageTemplate = messageTemplate;
+    }
+    
     internal Log4NetTextFormatterOptions Build()
-        => new(_formatProvider, _cDataMode, _xmlNamespace, CreateXmlWriterSettings(_lineEnding, _indentationSettings), _filterProperty, _formatException);
+        => new(_formatProvider, _cDataMode, _xmlNamespace, CreateXmlWriterSettings(_lineEnding, _indentationSettings), _filterProperty, _formatException, _messageTemplate);
 
     private static XmlWriterSettings CreateXmlWriterSettings(LineEnding lineEnding, IndentationSettings? indentationSettings)
     {

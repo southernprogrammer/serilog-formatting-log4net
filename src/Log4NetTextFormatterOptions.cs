@@ -8,7 +8,7 @@ namespace Serilog.Formatting.Log4Net;
 /// </summary>
 internal sealed class Log4NetTextFormatterOptions
 {
-    internal Log4NetTextFormatterOptions(IFormatProvider? formatProvider, CDataMode cDataMode, XmlQualifiedName? xmlNamespace, XmlWriterSettings xmlWriterSettings, PropertyFilter filterProperty, ExceptionFormatter formatException)
+    internal Log4NetTextFormatterOptions(IFormatProvider? formatProvider, CDataMode cDataMode, XmlQualifiedName? xmlNamespace, XmlWriterSettings xmlWriterSettings, PropertyFilter filterProperty, ExceptionFormatter formatException, string messageTemplate)
     {
         FormatProvider = formatProvider;
         CDataMode = cDataMode;
@@ -16,7 +16,10 @@ internal sealed class Log4NetTextFormatterOptions
         XmlWriterSettings = xmlWriterSettings;
         FilterProperty = filterProperty;
         FormatException = formatException;
+        MessageTemplate = messageTemplate;
     }
+    
+    internal string MessageTemplate { get; }
 
     /// <summary>See <see cref="Log4NetTextFormatterOptionsBuilder.UseFormatProvider"/></summary>
     internal IFormatProvider? FormatProvider { get; }
